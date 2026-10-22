@@ -1,0 +1,17 @@
+# Default config for valorant-external-esp
+# NOTE: educational use only — do NOT run against live Valorant servers.
+
+[core]
+log_level = "INFO"
+acknowledge_educational_only = false   # flip to true after reading SECURITY.md
+refresh_hz = 60
+overlay_alpha = 0.85
+offsets_path = "config/offsets.json"
+
+[features]
+esp_box = true
+esp_skeleton = true
+esp_health = true
+aimbot = false
+radar_hud = false
+stream_proof = true
