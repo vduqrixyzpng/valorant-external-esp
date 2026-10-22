@@ -1,0 +1,13 @@
+{
+  "_comment": "Stale 2024 offsets kept for educational reference only. Values will NOT work on current patches.",
+  "world": 145234560,
+  "actor_manager": 0x1A0,
+  "actor_count": 0x28,
+  "actor_array": 0x30,
+  "team_id": 0x3B0,
+  "health": 0x1C4,
+  "origin": 0x130,
+  "view_matrix": 0x2E0,
+  "bone_matrix": 0x4A0,
+  "local_player": 0x2A0
+}
