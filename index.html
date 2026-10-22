@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>valorant-external-esp — External ESP &amp; Aimbot (Educational)</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg-deep: #070a16;
+    --bg-mid: #0d1226;
+    --indigo: #4f46e5;
+    --indigo-light: #818cf8;
+    --violet: #a855f7;
+    --cyan: #22d3ee;
+    --text-main: #e7e9f5;
+    --text-dim: #9aa1c0;
+    --card-bg: rgba(255, 255, 255, 0.035);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --accent: #ff4655;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 0%, rgba(79, 70, 229, 0.28), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 85% 10%, rgba(168, 85, 247, 0.20), transparent 60%),
+      radial-gradient(ellipse 90% 70% at 50% 100%, rgba(13, 18, 38, 0.9), transparent 70%),
+      linear-gradient(160deg, #0a0f22 0%, #0d1226 35%, #0b0f1e 70%, #070a16 100%);
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 30%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 30%, #000 30%, transparent 100%);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    background: rgba(10, 14, 30, 0.62);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.02rem;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    box-shadow: 0 0 18px rgba(129, 140, 248, 0.55);
+    flex-shrink: 0;
+  }
+
+  .brand span.accent {
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    color: #fff;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border-radius: 11px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.18s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #fff;
+    padding: 11px 22px;
+    box-shadow: 0 6px 22px rgba(99, 102, 241, 0.42);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(139, 92, 246, 0.6);
+  }
+
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: var(--text-main);
+    padding: 13px 26px;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-lg {
+    padding: 15px 32px;
+    font-size: 1rem;
+    border-radius: 13px;
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero {
+    padding: 92px 0 84px;
+    text-align: center;
+    position: relative;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: #c7ccf5;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(129, 140, 248, 0.34);
+    margin-bottom: 28px;
+  }
+
+  .pill .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-size: clamp(2.3rem, 6vw, 4.15rem);
+    line-height: 1.06;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    margin-bottom: 24px;
+    background: linear-gradient(100deg, #ffffff 0%, #c7d2fe 34%, #a5b4fc 58%, #c084fc 80%, #f0abfc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .hero p.lead {
+    max-width: 640px;
+    margin: 0 auto 38px;
+    color: var(--text-dim);
+    font-size: 1.06rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 54px;
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .stat-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 132px;
+    padding: 14px 22px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+  }
+
+  .stat-chip .val {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .stat-chip .lbl {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section {
+    padding: 78px 0;
+  }
+
+  .sec-head {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .sec-eyebrow {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--indigo-light);
+    margin-bottom: 12px;
+  }
+
+  .sec-head h2 {
+    font-size: clamp(1.65rem, 3.6vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #fff;
+  }
+
+  /* ---------- FEATURES ---------- */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .card {
+    position: relative;
+    padding: 28px 26px 30px;
+    border-radius: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-top: 2px solid rgba(129, 140, 248, 0.55);
+    overflow: hidden;
+    transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--indigo), var(--violet), var(--cyan));
+    opacity: 0.9;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(129, 140, 248, 0.4);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .card .icon {
+    font-size: 1.7rem;
+    line-height: 1;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  .card h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 9px;
+    letter-spacing: -0.01em;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-left: 8px;
+  }
+
+  .steps::before {
+    content: "";
+    position: absolute;
+    left: 27px;
+    top: 22px;
+    bottom: 22px;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--indigo), var(--violet) 50%, transparent 100%);
+    opacity: 0.75;
+  }
+
+  .step {
+    position: relative;
+    display: flex;
+    gap: 24px;
+    padding: 0 0 42px 0;
+  }
+
+  .step:last-child {
+    padding-bottom: 0;
+  }
+
+  .step-num {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    background: linear-gradient(150deg, #1b2144, #151a33);
+    border: 1px solid rgba(129, 140, 248, 0.45);
+    box-shadow: 0 0 0 5px rgba(7, 10, 22, 0.9), 0 0 24px rgba(99, 102, 241, 0.35);
+  }
+
+  .step-body {
+    padding-top: 4px;
+  }
+
+  .step-body h3 {
+    font-size: 1.06rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 7px;
+  }
+
+  .step-body p {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    max-width: 520px;
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-list {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  details.faq {
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  details.faq[open] {
+    border-color: rgba(129, 140, 248, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  details.faq summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 19px 24px;
+    font-weight: 600;
+    font-size: 0.96rem;
+    color: #fff;
+    user-select: none;
+  }
+
+  details.faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .plus {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .plus::before,
+  .plus::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: var(--indigo-light);
+    border-radius: 2px;
+    transform: translate(-50%, -50%);
+  }
+
+  .plus::before {
+    width: 13px;
+    height: 2px;
+  }
+
+  .plus::after {
+    width: 2px;
+    height: 13px;
+  }
+
+  details.faq[open] .plus {
+    transform: rotate(45deg);
+  }
+
+  details.faq[open] .plus::before,
+  details.faq[open] .plus::after {
+    background: var(--accent);
+  }
+
+  .faq-answer {
+    padding: 0 24px 21px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 16px;
+    margin-top: 0;
+  }
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    padding: 62px 36px;
+    text-align: center;
+    background: linear-gradient(150deg, rgba(30, 27, 75, 0.85), rgba(13, 18, 38, 0.95));
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  }
+
+  .cta-banner::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 720px;
+    height: 720px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, rgba(79, 70, 229, 0.14) 38%, transparent 68%);
+    pointer-events: none;
+  }
+
+  .cta-banner > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-banner h2 {
+    font-size: clamp(1.6rem, 3.6vw, 2.35rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+
+  .cta-banner p {
+    color: var(--text-dim);
+    max-width: 520px;
+    margin: 0 auto 30px;
+    font-size: 0.98rem;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 34px 0;
+    margin-top: 24px;
+  }
+
+  .foot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .foot-inner p {
+    font-size: 0.83rem;
+    color: var(--text-dim);
+  }
+
+  .foot-inner a {
+    color: var(--indigo-light);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .foot-inner a:hover {
+    color: #fff;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .nav-links {
+      display: none;
+    }
+
+    .nav-inner {
+      height: 62px;
+    }
+
+    .brand {
+      font-size: 0.92rem;
+    }
+
+    .nav-inner .btn-primary {
+      padding: 9px 16px;
+      font-size: 0.83rem;
+    }
+
+    header.hero {
+      padding: 62px 0 58px;
+    }
+
+    h1 {
+      font-size: 2.15rem;
+    }
+
+    .hero p.lead {
+      font-size: 0.96rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      margin-bottom: 42px;
+    }
+
+    .hero-actions .btn {
+      width: 100%;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-chip {
+      min-width: 0;
+      padding: 12px 10px;
+    }
+
+    section {
+      padding: 56px 0;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .sec-head {
+      margin-bottom: 38px;
+    }
+
+    .steps::before {
+      left: 22px;
+    }
+
+    .step {
+      gap: 16px;
+    }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+    }
+
+    .cta-banner {
+      padding: 44px 22px;
+      border-radius: 18px;
+    }
+
+    .foot-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .wrap {
+      padding: 0 18px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="wrap nav-inner">
+      <a href="#" class="brand">
+        <span class="brand-mark">🎯</span>
+        <span>valorant<span class="accent">-</span>external<span class="accent">-</span>esp</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a class="btn btn-primary" href="https://gitscore.cc" target="_blank" rel="noopener">Download</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="pill">
+        <span class="dot"></span>
+        Educational reverse-engineering project
+      </div>
+      <h1>Valorant External ESP<br>&amp; Aimbot Loader</h1>
+      <p class="lead">
+        A memory-based, external cheat loader built for studying game-security internals:
+        player glow, box ESP, and skeleton overlays rendered from a separate process —
+        documented end-to-end so you can learn how anti-cheat detection actually works.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="https://gitscore.cc" target="_blank" rel="noopener">⬇ Download for Windows</a>
+        <a class="btn btn-ghost btn-lg" href="https://gitscore.cc" target="_blank" rel="noopener">★ View on GitHub</a>
+      </div>
+      <div class="stats">
+        <div class="stat-chip">
+          <span class="val">12,400+</span>
+          <span class="lbl">Downloads</span>
+        </div>
+        <div class="stat-chip">
+          <span class="val">v2.4.1</span>
+          <span class="lbl">Version</span>
+        </div>
+        <div class="stat-chip">
+          <span class="val">Windows 10 / 11</span>
+          <span class="lbl">Platform</span>
+        </div>
+        <div class="stat-chip">
+          <span class="val">Free &amp; Open Source</span>
+          <span class="lbl">License</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-eyebrow">Capabilities</div>
+        <h2>What the loader actually does</h2>
+      </div>
+      <div class="features-grid">
+        <div class="card">
+          <span class="icon">✨</span>
+          <h3>Player Glow</h3>
+          <p>Reads entity color data out-of-process and highlights enemy outlines through a memory-mapped glow buffer, with adjustable intensity and visibility checks.</p>
+        </div>
+        <div class="card">
+          <span class="icon">📦</span>
+          <h3>Box ESP</h3>
+          <p>Projects 3D bone positions to 2D screen space and draws bounding boxes with distance scaling, health-tinted borders, and head/body color separation.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🦴</span>
+          <h3>Skeleton Overlay</h3>
+          <p>Full bone-to-bone skeleton rendering using the game's bone matrix offsets — a hands-on lesson in reading transform hierarchies from process memory.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🧠</span>
+          <h3>Memory-Based Loader</h3>
+          <p>External reader/writer using <code>ReadProcessMemory</code> and handle duplication. No DLL injection, no kernel driver — ideal for learning process isolation.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🎯</span>
+          <h3>Aimbot Module</h3>
+          <p>Purely academic target-selection study: FOV gating, bone priority, smoothing curves, and how input simulation is detected by modern anti-cheat.</p>
+        </div>
+        <div class="card">
+          <span class="icon">📚</span>
+          <h3>Fully Documented</h3>
+          <p>Every offset, signature pattern, and overlay routine is explained in the source. Built as a teaching companion for game-security researchers.</p>
+        </div>
+      </div
